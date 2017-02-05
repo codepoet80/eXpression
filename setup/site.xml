@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Site Name="Site Name" Description="Description" BaseURL="www.url.com,www.url.com" defaultURL="http://something.expressionblogs.net" defaultStyle="site/custom.xsl" image="" home="eXpression/expression.asmx/" query="getBlogTransformed?blogID=&amp;topicID=&amp;startDate=&amp;entries=&amp;style=&amp;contentType=HTML&amp;privateKey=" private="false" type="personal">
+</Site>

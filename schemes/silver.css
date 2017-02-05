@@ -1,0 +1,135 @@
+Body
+{
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	background-color: #9294A6;
+}
+#mainTable
+{
+	background-color: #FFFFFF;border-left: 15px solid #4c4f5f; border-right: 15px solid #4c4f5f;
+}
+.main
+{
+	background-color: #FFFFFF;
+}
+.SiteTitleCell
+{
+	line-height: 1.2em;
+	color: #ccc;
+	letter-spacing: .2em;
+	background-color: #d8d8d8;
+	text-align: center;
+}
+.SiteDesc
+{
+	margin-bottom: 20px;
+	font: 65%/1.4em "Trebuchet MS" ,Trebuchet,Arial,Verdana,Sans-serif;
+	text-transform: uppercase;
+	letter-spacing: .2em;
+	color: #777;
+}
+H1
+{
+	margin: 0;
+	color: #4c4f5f;
+	font-size: 30px;
+}
+H2
+{
+	font: bold 18/1.4em "Trebuchet MS" ,Trebuchet,Arial,Verdana,Sans-serif;
+	text-transform: uppercase;
+	letter-spacing: .2em;
+	color: #4c4f5f;
+	border-bottom: 1px solid #aaafbe;
+}
+H3
+{
+	font-family: Arial, Verdana,Sans-serif;
+	font-weight: bold;
+	font-size: 16px;
+	margin: .25em 0 0;
+	color: #777;
+}
+H4
+{
+	font-weight: normal;
+	font-size: 11px;
+	margin-top: 8px;
+	margin-bottom: 20px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	color: #777;
+	border-bottom: 1px solid #aaafbe;
+}
+H5
+{
+	font-weight: normal;
+	text-align: right;
+	font-size: 11px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	color: #777;
+}
+td
+{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 70%;
+	color: black;
+}
+.PostHeaderDate
+{
+	font-family: Verdana,Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	text-transform: uppercase;
+	color: #666;
+}
+.content
+{
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 10px;
+	line-height:15px;
+}
+.menu
+{
+	width: 170px;
+	padding: 15px;
+	color: #4c4f5f;
+	background-color: #eee;
+	border-left: 1px solid #aaafbe;
+	line-height: 14px;
+}
+.menuBlock
+{
+	border-bottom: 1px solid #aaafbe;
+}
+.menuItem
+{
+	text-decoration:none;
+}
+a
+{
+	text-decoration: none;
+	color: #525A80;
+}
+a:hover
+{
+	background-color: #3A3e54;
+	text-decoration: none;
+	color: #fff;
+}
+.psThumb
+{
+	border: 1px solid gray;
+	margin: 5px;
+	cursor: hand;
+}
+.psThumb:hover
+{
+	border: 1px solid #585C8F;
+}
+.psStreamImg
+{
+	border: 4px solid #525A80; margin-left: 1px; margin-bottom: 6px;
+}
