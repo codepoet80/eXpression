@@ -1,0 +1,149 @@
+<h2>File Explorer</h2>
+<p>You'll need FireFox 1.0 or Internet Explorer 5.5 or better to view this section.<br/><br/>
+</p>
+<div id="divTitle"> </div>
+<div id="divItems" style="width: 100%;">
+<br/><i>Loading File List...</i><br/>
+</div>
+<h4 id="divNav"></h4>
+<a href="https://github.com/codepoet80/PhotoShare/"><img src="https://github.com/codepoet80/PhotoShare/blob/main/photosharebadge.gif" border="0" align="absmiddle" alt="Powered by PhotoShare" width="80" height="15"/> <i>Powers this site</i></a><br/>&nbsp;
+<script language="javascript" src="../../jsObjects/jsUI-Global/common.js"></script>
+<script language="javascript" src="../../jsObjects/jsDA-wsBind/component.js"></script>
+<script language="javascript" src="../../photoshare/photoshare.js"></script>
+<script>
+var myws = new Object();
+var mwspath;
+if (!documentPath)
+	var documentPath = replace(picturePath, "pictures", "documents");
+function initws()
+{
+	try
+	{
+		wspath = "http://" + document.location.host + "/expression/expression.asmx";
+		myws = wsbindNew("myws", wspath);
+		if (!myws)
+			alert ("Unable to bind to a remote webservice (the webservice host is different than this page host).\nIf your sure you want to allow this interaction, please make the appropriate security setting changes in your browser.");
+		else
+		{
+			fillList(documentPath);
+		}
+	}
+	catch(e)
+	{
+		document.getElementById("divItems").innerHTML = "<i>Your browser is not capable of displaying the file list...</i>";
+	}
+}
+
+function fillList(path)
+{
+	window.scrollTo(0,0);
+	var pathName = path.split("\\");
+	pathName = pathName[pathName.length-1];
+
+	path = urlEncode(path);
+		
+	var fileList = myws.ListFiles(path, "");
+	document.getElementById("divTitle").innerHTML = "<h3>" + urlDecode(pathName) + "</h3><br/>";
+	document.getElementById("divItems").innerHTML = "";
+	if (document.all)
+	{
+		var xmlDoc = new ActiveXObject("MSXML2.DOMDocument");
+		xmlDoc.async = false;
+		if (xmlDoc.loadXML(fileList))
+		{
+			var items = xmlDoc.selectNodes("//Item");
+			for (var i=0;i<items.length;i++)
+			{
+				if (items[i].attributes.getNamedItem("Type").value == "folder")
+					{
+					dirPath = replace(path, "\\", "\\\\") + "\\\\" + urlEncode(items[i].attributes.getNamedItem("Name").value);
+					drawFile(items[i].attributes.getNamedItem("Name").value, dirPath, items[i].attributes.getNamedItem("Date").value, null, items[i].attributes.getNamedItem("Type").value);
+					}
+				else
+					drawFile(items[i].attributes.getNamedItem("Name").value, items[i].attributes.getNamedItem("Path").value, items[i].attributes.getNamedItem("Date").value, items[i].attributes.getNamedItem("Size").value, items[i].attributes.getNamedItem("Type").value);
+			}
+			var parentPath = getParent(path);
+			if (parentPath != null)
+				document.getElementById("divNav").innerHTML = "<a target='_self' href=\"javascript:fillList('" + parentPath + "')\">&lt; Back</a>";
+			else
+				document.getElementById("divNav").innerHTML = "";
+		}
+		else
+		{
+			document.getElementById("divItems").innerHTML = "Could not load file list";
+			document.getElementById("divNav").innerHTML = "";
+		}
+	}
+	else
+	{
+		try
+		{
+			xmlParser = new DOMParser();
+			xmlDoc = xmlParser.parseFromString(fileList, 'text/xml');
+			document.getElementById("divItems").innerHTML = "";
+			items = xmlDoc.getElementsByTagName("Item");
+			for (var e=0;e<items.length;e++)
+			{
+				if (items[e].getAttribute("Type") == "folder")
+				{
+					dirPath = replace(path, "\\", "\\\\") + "\\\\" + urlEncode(items[e].getAttribute("Name"));
+					drawFile(items[e].getAttribute("Name"), dirPath, items[e].getAttribute("Date"), null, items[e].getAttribute("Type"));
+				}
+				else
+				{
+					drawFile(items[e].getAttribute("Name"), items[e].getAttribute("Path"), items[e].getAttribute("Date"), items[e].getAttribute("Size"), items[e].getAttribute("Type"));
+				}
+			}
+			
+			var parentPath = getParent(path);
+			if (parentPath != null)
+				document.getElementById("divNav").innerHTML = "<a target='_self' href=\"javascript:fillList('" + parentPath + "')\">&lt; Back</a>";
+			else
+				document.getElementById("divNav").innerHTML = "";
+		}
+		catch(e)
+		{
+			document.getElementById("divItems").innerHTML = "Could not load file list";
+			document.getElementById("divNav").innerHTML = "";
+		}
+	}
+}
+
+function getParent(path)
+{
+	if (path.charAt(path.length-1) == "\\")
+		path = path.substr(0,path.length-1);
+	path = path.substr(path.indexOf(documentPath), path.length);
+	if (path != documentPath)
+	{
+		var parentPath = path.substr(0,path.lastIndexOf("\\"));
+		return replace(parentPath, "\\", "\\\\");
+	}	
+	return null;
+}
+
+function buildURL(path)
+{
+	var docPathParts = documentPath.split("\\");
+	
+	var pathParts = path.split(docPathParts[docPathParts.length-1]);
+	path = replace(pathParts[pathParts.length-1], "/", "");
+	return "../.." + documentPath + path;
+}
+
+function drawFile(name, path, date, size, type)
+{
+	path = urlEncode(path);
+	if (type == "folder")
+		document.getElementById("divItems").innerHTML += "<a target='_self' href=javascript:fillList(\"" + path + "\")><img src='../../expression/images/icoFolder-s.gif' align='absmiddle' border='0'>&nbsp;" + name + "</a><br/>";
+	else
+	{
+		document.getElementById("divItems").innerHTML += "<a href='" + replace(buildURL(path), "\\", "/") + "'><img src='../../expression/images/ico" + type + "-s.gif' width='16' height='16' align='absmiddle' border='0'/>&nbsp;" + name + "</a><br/>";
+	}
+}
+</script>
+<script>
+setTimeout("initws()", 500);
+</script>
+ 
+ 

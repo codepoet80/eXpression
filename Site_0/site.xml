@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Site Name="eXpression Site Management" Description="" BaseURL="admin.expressionblogs.net" defaultURL="https://github.com/codepoet80" defaultStyle="site_0/custom.xsl" image="" home="expression/admin/default.asp?" query="getBlogTransformed?blogID=0&amp;topicID=&amp;startDate=&amp;entries=&amp;style=&amp;contentType=HTML&amp;privateKey=" private="false">
+<Links>
+</Links>
+</Site>

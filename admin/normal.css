@@ -1,0 +1,6 @@
+Body		{font-family:arial,helvetica; font-size: 9pt; background-color:#E5E5E5; margin-left:10px; margin-right: 10px; margin-top: 0px}
+Table		{font-family:arial,helvetica; font-size: 9pt;}
+TD			{font-family:arial,helvetica; font-size: 9pt;}
+a			{text-decoration:none; color: #2A2A7E}
+a:hover		{text-decoration:none; color: #fff; background-color:#2A2A7E}
+.PageTitle	{ text-align:right; background-color:#808080; margin-left:-10px; margin-right: -10px; padding: 5px; border-bottom: 1px solid white; font-weight: bold; font-size: 12pt;cursor:default;color: threedhighlight;font-family: tahoma,arial }

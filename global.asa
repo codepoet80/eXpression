@@ -1,0 +1,53 @@
+<SCRIPT LANGUAGE="VBScript" RUNAT="Server">
+
+Sub Application_OnStart
+	' Set our user count to 0 when we start the server
+	Application("ActiveUsers") = 0
+	
+'--config
+Application("SiteName") = "eXpression"
+Application("adminRoot") = "expressionblogs.net"
+strconn="PROVIDER=MSDASQL;DRIVER={SQL Server};SERVER=localhost;DATABASE=eXpression;UID=sa;PWD=password;"
+'--config
+
+	Application("ConnStr") = strconn
+	Server.ScriptTimeout = 180
+End Sub
+
+Sub Session_OnStart
+	' Change Session Timeout to 60 minutes (if you need to)
+	Session.Timeout = 60
+	' Increase the active visitors count when we start the session
+	Application.Lock
+		Application("ActiveUsers") = Application("ActiveUsers") + 1
+	Application.UnLock
+End Sub
+
+Sub Session_OnEnd
+	' Decrease the active visitors count when the session ends.
+	Application.Lock
+		Application("ActiveUsers") = Application("ActiveUsers") - 1
+	Application.UnLock
+End Sub
+
+</SCRIPT>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

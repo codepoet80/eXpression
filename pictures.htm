@@ -1,0 +1,180 @@
+<h2>Photo Albums</h2>
+<p>You'll need FireFox 1.0 or Internet Explorer 5.5 or better to view this section. Please be patient while thumbnails are auto-generated.<br/>If no images appear, try clicking on a thumbnail, and then clicking back.<br/>
+</p>
+<div id="divTitle"> </div>
+<div id="divItems" style="width: 100%;">
+<br/><i>Loading Image List...</i><br/>
+</div>
+<h4 id="divNav"></h4>
+<script language="javascript" src="../../jsObjects/jsUI-Global/common.js"></script>
+<script language="javascript" src="../../jsObjects/jsDA-wsBind/component.js"></script>
+<script language="javascript" src="../../photoshare/photoshare.js"></script>
+<b><a href="https://github.com/codepoet80/PhotoShare"><img src="https://github.com/codepoet80/PhotoShare/blob/main/photosharebadge.gif" border="0" align="absmiddle"></a> Powered by PhotoShare</b><br/>
+<ul>
+<li><a href="javascript:openViewer()" target="_self">Use the PhotoShare Viewer</a> for more features...</li>
+<li><a href="javascript:imageStream()" target="_self"><img src="../../expression/images/rss.gif" border="0" align="absmiddle" alt="Powered by PhotoShare"/> Subscribe</a> to the latest images from this site</li>
+</ul>
+<script>
+function openViewer()
+{
+	var openPath = replace(picturePath, "\\", "\\\\");
+	window.open ("../photoshare?folder=" + openPath, "PhotoShare", "toolbars=no,resizable=yes,directories=no,scrollbars=yes");
+}
+function imageStream()
+{
+	var currPath = document.location + "";
+	currPath = currPath.split("getWebPageTransformed");
+	var wquery = getQueryString(currPath[1]);
+	window.open("/expression/expression.asmx/getImageStream?siteID=" + wquery.blogID + "&Count=10");
+}
+var myws = new Object();
+var mwspath;
+function initws()
+{
+	try
+	{
+		wspath = "http://" + document.location.host + "/expression/expression.asmx";
+		myws = wsbindNew("myws", wspath);
+		if (!myws)
+			alert ("Unable to bind to a remote webservice (the webservice host is different than this page host).\nIf your sure you want to allow this interaction, please make the appropriate security setting changes in your browser.");
+		else
+		{
+			fillList(picturePath);
+		}
+	}
+	catch(e)
+	{
+		document.getElementById("divItems").innerHTML = "<i>Your browser is not capable of displaying our pictures...</i>";
+	}
+}
+
+function fillList(path)
+{
+	window.scrollTo(0,0);
+	var pathName = path.split("\\");
+	pathName = pathName[pathName.length-1];
+
+	path = urlEncode(path);
+		
+	var fileList = myws.ListFiles(path, "");
+	document.getElementById("divTitle").innerHTML = "<h3>" + urlDecode(pathName) + "</h3><br/>";
+	document.getElementById("divItems").innerHTML = "";
+	if (document.all)
+	{
+		var xmlDoc = new ActiveXObject("MSXML2.DOMDocument");
+		xmlDoc.async = false;
+		if (xmlDoc.loadXML(fileList))
+		{
+			var items = xmlDoc.selectNodes("//Item");
+			for (var i=0;i<items.length;i++)
+			{
+				dirPath = replace(path, "\\", "\\\\") + "\\\\" + urlEncode(items[i].attributes.getNamedItem("Name").value);
+				if (items[i].attributes.getNamedItem("Type").value == "folder")
+					document.getElementById("divItems").innerHTML += "<a target='_self' href=javascript:fillList(\"" + dirPath + "\")>" + items[i].attributes.getNamedItem("Name").value + "</a><br/>";
+				else if (items[i].attributes.getNamedItem("Type").value == "jpg" || items[i].attributes.getNamedItem("Type").value == "gif")
+					drawImage(items[i].attributes.getNamedItem("Path").value, items[i].attributes.getNamedItem("Date").value, items[i].attributes.getNamedItem("Size").value);
+			}
+			var parentPath = getParent(path);
+			if (parentPath != null)
+				document.getElementById("divNav").innerHTML = "<a target='_self' href=\"javascript:fillList('" + parentPath + "')\">&lt; Back</a>";
+			else
+				document.getElementById("divNav").innerHTML = "";
+		}
+		else
+		{
+			document.getElementById("divItems").innerHTML = "Could not load pictures";
+			document.getElementById("divNav").innerHTML = "";
+		}
+	}
+	else
+	{
+		try
+		{
+			xmlParser = new DOMParser();
+			xmlDoc = xmlParser.parseFromString(fileList, 'text/xml');
+			document.getElementById("divItems").innerHTML = "";
+			items = xmlDoc.getElementsByTagName("Item");
+			for (var e=0;e<items.length;e++)
+			{
+				dirPath = replace(path, "\\", "\\\\") + "\\\\" + urlEncode(items[e].getAttribute("Name"));
+				if (items[e].getAttribute("Type") == "folder")
+					document.getElementById("divItems").innerHTML += "<a target='_self' href=javascript:fillList(\"" + dirPath + "\")>" + items[e].getAttribute("Name") + "</a><br/>";
+				else if (items[e].getAttribute("Type") == "jpg" || items[e].getAttribute("Type") == "gif")					
+					drawImage(items[e].getAttribute("Path"), items[e].getAttribute("Date"), items[e].getAttribute("Size"));
+			}
+			
+			var parentPath = getParent(path);
+			if (parentPath != null)
+				document.getElementById("divNav").innerHTML = "<a target='_self' href=\"javascript:fillList('" + parentPath + "')\">&lt; Back</a>";
+			else
+				document.getElementById("divNav").innerHTML = "";
+		}
+		catch(e)
+		{
+			document.getElementById("divItems").innerHTML = "Could not load pictures";
+			document.getElementById("divNav").innerHTML = "";
+		}
+	}
+}
+
+function getParent(path)
+{
+	if (path.charAt(path.length-1) == "\\")
+		path = path.substr(0,path.length-1);
+	path = path.substr(path.indexOf(picturePath), path.length);
+	if (path != picturePath)
+	{
+		var parentPath = path.substr(0,path.lastIndexOf("\\"));
+		return replace(parentPath, "\\", "\\\\");
+	}	
+	return null;
+}
+function drawImage(path, date, size)
+{
+	path = urlEncode(path);
+	document.getElementById("divItems").innerHTML += "<img onclick='showImage(\"" + replace(path, "\\", "\\\\") + "\", \"" + date + "\", \"" + size + "\")' src='../../photoshare/photoshare.asmx/GetImage?Path=" + path + "&Size=110&Rotate=0' class='psThumb' border='0'>";
+}
+
+function showImageInline(path, date, size)
+{
+	window.scrollTo(0,0);
+	document.getElementById("divItems").innerHTML = "";
+	path = urlEncode(path);
+	var pathParts = path.split("\\");
+	var pathName = pathParts[pathParts.length-1];
+	var parentPath = pathParts[pathParts.length-2];
+	pathName = pathName.substring(0, pathName.length - 4);
+	document.getElementById("divTitle").innerHTML = "<h3>" + urlDecode(pathName) + "</h3>";
+	document.getElementById("divTitle").innerHTML += "<p class='PostHeaderDate'>" + urlDecode(parentPath) + "</p>";
+	document.getElementById("divItems").innerHTML = "<img src='../../photoshare/photoshare.asmx/GetImage?Path=" + path + "&Size=500&Rotate=0' border='0'>";
+	var parentPath = getParent(path);
+	if (parentPath != null)
+		document.getElementById("divNav").innerHTML = "<a target='_self' href=\"javascript:fillList('" + parentPath + "')\">&lt; Back</a>";
+	else
+		document.getElementById("divNav").innerHTML = "";
+}
+
+function showImage(path, date, size)
+{
+	path = urlEncode(path);
+	var pathParts = path.split("\\");
+	var pathName = pathParts[pathParts.length-1];
+	var parentPath = pathParts[pathParts.length-2];
+	pathName = pathName.substring(0, pathName.length - 4);;
+	window.open("../../photoshare/photoshare.asmx/GetImage?Path=" + path + "&Size=800&Rotate=0");
+}
+
+
+function showSlides(path)
+{
+	if (document.all)
+		window.open("../../photoshare/default.htm?folder=pictures\\\\" + path, "PhotoShare", "toolbar=no, menubar=no, resizable=yes, status=yes");
+	else
+		window.open("../../pictures/" + path, "Pictures");
+}
+</script>
+<script>
+setTimeout("initws()", 500);
+</script>
+ 
+ 
